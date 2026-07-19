@@ -1,4 +1,4 @@
-name: SSH ROM Build Runner
+name: LineageOS 20 ROM Build via SSH
 
 on:
   workflow_dispatch:
@@ -6,27 +6,28 @@ on:
 jobs:
   ssh-build:
     runs-on: ubuntu-latest
-    timeout-minutes: 360 # Batas maksimal free runner (6 jam)
+    timeout-minutes: 360
 
     steps:
-      - name: 1. Bersihkan Storage (Wajib buat Build ROM)
+      - name: 1. Maksimalisasi Storage (Hapus Bloatware VM)
         run: |
-          echo "=== Storage Sebelum Bersih-bersih ==="
+          echo "=== Storage Awal ==="
           df -h
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /usr/local/lib/android
           sudo rm -rf /opt/ghc
           sudo rm -rf /usr/local/share/boost
           sudo rm -rf /opt/hostedtoolcache
-          echo "=== Storage Setelah Bersih-bersih (Sisa ~35GB+) ==="
+          echo "=== Storage Setelah Pembersihan ==="
           df -h
 
-      - name: 2. Install Tools & Dependencies Android
+      - name: 2. Install Dependencies Android 13 (LineageOS 20)
         run: |
           sudo apt-get update
           sudo apt-get install -y bc bison build-essential curl flex g++-multilib \
             gcc-multilib git gnupg gperf libxml2 libxml2-utils lzops rsync \
-            schedtool squashfs-tools xsltproc zip zlib1g-dev libssl-dev byobu tmux
+            schedtool squashfs-tools xsltproc zip zlib1g-dev libssl-dev byobu tmux \
+            python-is-python3 libncurses5 imagemagick libelf-dev pkg-config pngcrush
           
           # Install Repo Tool secara global
           mkdir -p ~/bin
@@ -34,5 +35,6 @@ jobs:
           chmod a+x ~/bin/repo
           sudo ln -sf ~/bin/repo /usr/bin/repo
 
-      - name: 3. Jalankan SSH Session (Upterm)
+      - name: 3. Menjalankan Sesi SSH (Upterm)
         uses: owenthereal/action-upterm@v1
+        
